@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/poll.dart';
+import '../../services/api.dart';
 import '../my_scaffold.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +22,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   _loadData() async {
-    // todo: Load list of polls here
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 3), () {});
+    try {
+      var result = await ApiClient().getPolls();
+      setState(() {
+        _polls = result;
+      });
+    } catch (e) {
+      setState(() {
+
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
   }
 
   @override
@@ -48,7 +68,23 @@ class _HomePageState extends State<HomePage> {
       itemCount: _polls!.length,
       itemBuilder: (BuildContext context, int index) {
         // todo: Create your poll item by replacing this Container()
-        return Container();
+        return Container(
+          color: Colors.white70,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Text(("${_polls![index].id}. ")),
+                  Expanded(child: Text(_polls![index].question,overflow: TextOverflow.clip,)),
+                ],
+
+              ),
+
+
+
+            )
+        );
+
       },
     );
   }
